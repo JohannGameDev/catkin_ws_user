@@ -27,7 +27,7 @@ class image_converter:
 
 
   def callback(self,data):
-    #print("hello")
+
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
@@ -42,20 +42,18 @@ class image_converter:
       dst = cv2.GaussianBlur(cv_image, (5, 5), 0, 0)
       # Convert BGR to HSV
       hsv = cv2.cvtColor(dst, cv2.COLOR_BGR2HSV)
-      #print hsv
+
       #cv2.imwrite('src/assignment5/data/test.png', hsv)
-      # define range of blue color in HSV
-      #lower_red = np.array([0, 10, 10],dtype=np.uint8)
-      #upper_red = np.array([30,30, 255],dtype=np.uint8)
-      sensitivity = 50
+      
+      sensitivity = 50 # use hsl
       lower_white = np.array([0, 0, 255 - sensitivity])
       upper_white = np.array([255, sensitivity, 255])
-      # Threshold the HSV image to get only blue colors
+      # Threshold the HSV image to get only white colors
       mask = cv2.inRange(hsv, lower_white, upper_white)
 
       # Bitwise-AND mask and original image
       res = cv2.bitwise_and(cv_image, cv_image, mask=mask)
-      #print res
+      
       #cv2.imwrite('src/assignment5/data/test_mask.png', res)
 
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(res, "bgr8"))
